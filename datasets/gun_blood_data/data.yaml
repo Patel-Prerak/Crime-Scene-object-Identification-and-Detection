@@ -1,0 +1,9 @@
+# Paths
+path: ./datasets/gun_blood_data  # Root dir
+train: train/images
+test: test/images
+val: valid/images
+
+# Classes
+nc: 2  # Number of classes
+names: ['gun', 'blood_stain']  # Class names must match your label IDs (0, 1)
