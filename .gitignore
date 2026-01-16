@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+.env
+
+# IDEs
+.idea/
+.vscode/
+
+# Project Specific - Data & Outputs
+datasets/
+runs/
+# Exclude standard YOLO weights as they can be downloaded
+yolov8l.pt
+yolov8m.pt
+yolov8n.pt
+# Keep custom weights if they are crucial, but ensure they are <100MB
+# Assuming Custom_Model/weights/best.pt is needed. 
+
+# Generated Outputs
+crime_scenes/
+ensemble_results/
+evidence_reports/
+yolo_internal_logs/
+
+# Mac
+.DS_Store
