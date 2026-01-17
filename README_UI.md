@@ -1,125 +1,111 @@
 # 🔍 Crime Scene Evidence Analyzer
 
-A professional, AI-powered forensic evidence detection and classification system with a stunning modern UI.
+**A professional, AI-powered forensic evidence detection and classification system featuring a state-of-the-art UI and advanced computer vision capabilities.**
 
-## ✨ Features
+![Banner](https://img.shields.io/badge/AI-Forensics-blueviolet?style=for-the-badge)
+![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python)
+![Streamlit](https://img.shields.io/badge/Streamlit-App-FF4B4B?style=for-the-badge&logo=streamlit)
+![YOLOv8](https://img.shields.io/badge/YOLOv8-Object%20Detection-yellow?style=for-the-badge)
 
-### 🎨 **Ultra-Professional UI Design**
-- **Animated Gradient Headers** with glassmorphism effects
-- **Interactive Stat Boxes** with hover animations
-- **Color-Coded Evidence Badges** with pulsing animations for weapons
-- **Modern Card Layouts** with depth and shadows
-- **Smooth Transitions** and micro-animations throughout
-- **Custom Gradient Scrollbars** matching the theme
-- **Responsive Design** that looks great on all screen sizes
+---
+## 📖 Overview
 
-### 🤖 **AI Detection Capabilities**
-- **Dual Model System:**
-  - YOLOv8 Large (Standard Model) - General object detection
-  - Custom Forensic Model - Specialized weapon & blood detection
-  
-- **Detectable Evidence:**
-  - 👤 Persons & Suspects
-  - 🔫 Weapons (Guns, Knives)
-  - 🩸 Blood Stains
-  - 📱 Digital Evidence (Phones, Laptops)
-  - 🎒 Personal Items (Backpacks, Handbags, Suitcases)
-  - 🍾 Bottles & Containers
+The **Crime Scene Evidence Analyzer** is a sophisticated tool designed for forensic professionals. It leverages **YOLOv8** and custom-trained models to detect critical evidence in crime scene imagery. Beyond detection, it offers a premium user experience with real-time statistics, detailed reporting, and a visually immersive interface.
 
-### 📊 **Advanced Analysis**
-- Real-time evidence detection with confidence scores
-- Visual annotations on detected objects
-- Comprehensive evidence summary dashboard
-- Detailed statistical metrics
-- Exportable CSV reports
-- Downloadable annotated images
+## ✨ Key Features
 
-## 🚀 Installation
+### 🎨 **Ultra-Professional UI Experience**
+*   **Immersive Design:** Animated gradient headers, glassmorphism effects, and consistent theming.
+*   **Interactive Elements:** Hover animations on stat boxes, pulsing badges for critical alerts, and smooth transitions.
+*   **Responsive Layout:** Optimized for various screen sizes with custom gradient scrollbars.
+*   **Visual Badges:**
+    *   🔴 **Weapons:** Pulsing red alerts.
+    *   🔵 **Persons:** Distinct blue identifiers.
+    *   🟣 **Digital Evidence:** Cyan-pink gradients.
+    *   🟢 **General Items:** Green-blue gradients.
 
-1. **Clone the repository:**
-```bash
-git clone https://github.com/paarth-birla/Crime-Scene-Evidence-Classification
-cd "crimse scene objects identifier and classifier"
-```
+### 🤖 **Advanced AI Detection**
+Powered by a dual-model system for maximum accuracy:
+1.  **YOLOv8 Large (Standard):** For robust general object detection.
+2.  **Custom Forensic Model:** Specifically trained for:
+    *   🩸 Blood Stains
+    *   🔫 Weapons (Guns, Knives)
+    *   👤 Suspects/Persons
+    *   📱 Digital Evidence (Phones, Laptops)
+    *   🎒 Personal Items (Backpacks, Handbags)
 
-2. **Install dependencies:**
-```bash
-pip install streamlit ultralytics opencv-python pandas pillow numpy
-```
+### 📊 **Comprehensive Analysis**
+*   **Real-time Inference:** Instant detection with confidence scores.
+*   **Evidence Dashboard:** Summary of total counts, average confidence, and critical findings.
+*   **Reporting:**
+    *   Export data to **CSV**.
+    *   Download **Annotated Images** with bounding boxes.
 
-3. **Run the application:**
-```bash
-streamlit run app.py
-```
+---
 
-The app will open in your browser at `http://localhost:8501`
+## 🚀 Getting Started
 
-## 📖 How to Use
+### Prerequisites
 
-1. **Upload Image:** Click the upload button and select a crime scene photograph (JPG, JPEG, or PNG)
-2. **Analyze:** Click the "🔍 Analyze Evidence" button to process the image
-3. **Review Results:** View detected evidence with confidence scores and visual annotations
-4. **Download Reports:** Export detailed CSV reports and annotated images
+Ensure you have **Python 3.8+** installed.
 
-## 🎨 UI Highlights
+### Installation
 
-### **Color Scheme**
-- **Primary Gradient:** Purple to violet (#667eea → #764ba2)
-- **Weapon Badges:** Red gradient with pulsing animation
-- **Person Badges:** Blue gradient
-- **Digital Evidence:** Cyan to pink gradient
-- **General Items:** Green to blue gradient
+1.  **Clone the Repository**
+    ```bash
+    git clone https://github.com/paarth-birla/Crime-Scene-Evidence-Classification
+    cd Crime-Scene-object-Identification-and-Detection-main
+    ```
 
-### **Animations**
-- Header pulsing glow effect
-- Rotating background patterns
-- Hover scale and lift effects
-- Smooth color transitions
-- Pulsing weapon badges for critical alerts
+2.  **Install Dependencies**
+    ```bash
+    pip install -r requirements.txt
+    ```
+    *(If `requirements.txt` is missing, install manually: `pip install streamlit ultralytics opencv-python pandas pillow numpy`)*
 
-### **Typography**
-- **Font:** Inter (Google Fonts)
-- **Headers:** 800 weight, large sizing
-- **Body:** 400-600 weight for readability
+3.  **Run the Application**
+    ```bash
+    streamlit run app.py
+    ```
+
+The application will launch automatically in your default web browser at `http://localhost:8501`.
+
+---
+
+## 📖 Usage Guide
+
+1.  **Upload:** Use the sidebar to upload a crime scene image (JPG, PNG, JPEG).
+2.  **Analyze:** Click the **"🔍 Analyze Evidence"** button.
+3.  **Explore:**
+    *   View the annotated image with clear bounding boxes.
+    *   Check the **Evidence Summary** for a statistical breakdown.
+    *   Review the granular **Detection Details** table.
+4.  **Export:** Use the sidebar or results section to download reports and images.
+
+---
 
 ## 🔧 Configuration
 
-- **Confidence Threshold:** 30% (adjustable in code)
-- **Visual Cutoff:** Only detections above 30% are displayed
-- **All detections logged:** Even low-confidence detections are saved in reports
+*   **Confidence Threshold:** Default is **30%**. Adjustable within the application code to filter low-confidence detections.
+*   **Logging:** All detections are logged internally for audit purposes, regardless of the visual threshold.
 
-## 📊 Evidence Summary Dashboard
+---
 
-The results page includes:
-- **Total Evidence Count** with high-confidence filter
-- **Weapons Detected** with critical alert
-- **Persons Identified** count
-- **Average Confidence Score** across all detections
-- **Color-Coded Badges** for each evidence type
-- **Detailed Table** with model source and confidence
-- **Download Options** for CSV and annotated images
+## 🛠️ Technology Stack
 
-## ⚠️ Important Notes
+*   **Frontend:** [Streamlit](https://streamlit.io/) (Custom CSS & Components)
+*   **Deep Learning:** [YOLOv8 by Ultralytics](https://github.com/ultralytics/ultralytics)
+*   **Computer Vision:** OpenCV, PIL
+*   **Data Processing:** Pandas, NumPy
 
-- This system uses advanced AI models for evidence detection
-- Results should be verified by forensic professionals
-- Minimum confidence threshold is set to 30% for visualization
-- All detections are logged regardless of confidence level
+---
 
-## 🛠️ Technical Stack
+## ⚠️ Disclaimer
 
-- **Frontend:** Streamlit with custom CSS
-- **AI Models:** YOLOv8 (Ultralytics)
-- **Image Processing:** OpenCV, PIL
-- **Data Handling:** Pandas, NumPy
-- **Styling:** Custom CSS with gradients and animations
+This tool is intended to assist forensic professionals. While it utilizes advanced AI, all automated detections should be verified by qualified human experts.
+
+---
 
 ## 📝 License
 
 This project is part of the Crime Scene Evidence Classification system.
-
-## 🙏 Acknowledgments
-
-- YOLOv8 by Ultralytics
-- Streamlit framework
-- Google Fonts (Inter)
