@@ -123,3 +123,7 @@ This project is part of the Crime Scene Evidence Classification system.
 - YOLOv8 by Ultralytics
 - Streamlit framework
 - Google Fonts (Inter)
+
+## 👥 Contributors
+
+- **devhl** - *Contributor*
