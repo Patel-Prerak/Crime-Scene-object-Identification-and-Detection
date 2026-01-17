@@ -7,6 +7,10 @@ import os
 import io
 from PIL import Image
 import numpy as np
+import base64
+import streamlit.components.v1 as components
+from vr_utils import create_aframe_scene
+from depth_utils import estimate_depth
 
 # Page configuration
 st.set_page_config(
@@ -398,7 +402,7 @@ st.markdown("""
         font-weight: 800;
         margin-bottom: 1rem;
         padding-bottom: 0.8rem;
-        border-bottom: 2px solid #d8b4fe;
+        border-bottom: none !important;
         letter-spacing: 2px;
         text-transform: uppercase;
     }
@@ -545,7 +549,7 @@ st.markdown("""
     .stFileUploader section button,
     [data-testid="stFileUploader"] button,
     [data-testid="stFileUploadDropzone"] button {
-        color: white !important;
+        color: black !important;
         background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%) !important;
         border: 2px solid white !important;
         border-radius: 8px !important;
@@ -567,6 +571,31 @@ st.markdown("""
     /* Additional specificity for button text */
     .stFileUploader button span,
     [data-testid="stFileUploader"] button span {
+        color: white !important
+    }
+
+    /* 1. Uploaded File List - Make Text Black (Visible on White Background) */
+    [data-testid="stUploadedFile"],
+    [data-testid="stUploadedFile"] div,
+    [data-testid="stUploadedFile"] span,
+    [data-testid="stUploadedFile"] small,
+    [data-testid="stUploadedFile"] svg {
+        color: black !important;
+    }
+
+    /* 2. Dropzone Instructions - Make Text White (Visible on Dark Background) */
+    [data-testid="stFileUploadDropzone"] div,
+    [data-testid="stFileUploadDropzone"] span,
+    [data-testid="stFileUploadDropzone"] small,
+    [data-testid="stFileUploadDropzone"] p,
+    [data-testid="stFileUploadDropzone"] svg {
+        color: #e5e7eb !important; /* Light Grey/White */
+        fill: #e5e7eb !important;
+    }
+
+    /* Exception for the button text itself, keep it white */
+    [data-testid="stFileUploader"] button,
+    [data-testid="stFileUploader"] button span {
         color: white !important;
     }
     
@@ -574,6 +603,46 @@ st.markdown("""
     [data-testid="stSidebar"] {
         background: #ffffff !important;
         border-right: 2px solid #e9d5ff;
+    }
+
+    /* Force ANY button in the header or sidebar nav to be visible and purple */
+    [data-testid="stSidebarCollapseButton"],
+    [data-testid="stSidebarNav"] > button,
+    [data-testid="collapsedControl"],
+    header button,
+    [data-testid="stHeader"] button {
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        color: white !important;
+        fill: white !important;
+        background-color: #a855f7 !important;
+        border: 1px solid #e9d5ff !important;
+        border-radius: 50% !important;
+        box-shadow: 0 4px 12px rgba(168, 85, 247, 0.3) !important;
+        transition: all 0.3s ease !important;
+        width: 2.5rem !important;
+        height: 2.5rem !important;
+        z-index: 999999 !important;
+        margin: 4px !important; /* Ensure spacing if multiple exist */
+    }
+
+    /* Target SVGs inside these buttons */
+    header button svg,
+    [data-testid="stHeader"] button svg,
+    [data-testid="stSidebarCollapseButton"] svg {
+        fill: white !important;
+        color: white !important;
+        stroke: white !important;
+    }
+    
+    /* Hover effects */
+    header button:hover,
+    [data-testid="stHeader"] button:hover,
+    [data-testid="stSidebarCollapseButton"]:hover {
+        background-color: #9333ea !important;
+        transform: scale(1.1);
+        box-shadow: 0 8px 20px rgba(168, 85, 247, 0.5) !important;
     }
     
     [data-testid="stSidebar"] h3 {
@@ -655,7 +724,9 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
         animation: slideIn 0.5s ease;
     }
-    
+    .stFileUploaderFileName {
+    color: black !important;
+    }
     @keyframes slideIn {
         from {
             opacity: 0;
@@ -665,6 +736,38 @@ st.markdown("""
             opacity: 1;
             transform: translateY(0);
         }
+    }
+
+    /* VR Mode Expander Styling - Aggressive Override */
+    [data-testid="stExpander"] details > summary {
+        background-color: #e0f2fe !important; /* Light Blue */
+        color: #0c4a6e !important; /* Dark Blue Text */
+        border: 1px solid #bae6fd !important;
+        border-radius: 8px !important;
+        font-family: 'Orbitron', sans-serif !important;
+        font-weight: 600 !important;
+        transition: background-color 0.3s ease !important;
+    }
+    
+    [data-testid="stExpander"] details > summary:hover {
+        background-color: #bae6fd !important; /* Slightly Darker Blue on Hover */
+        color: #0c4a6e !important;
+    }
+    
+    /* Force all text/icons inside the header to be Dark Blue */
+    [data-testid="stExpander"] details > summary *,
+    [data-testid="stExpander"] details > summary p,
+    [data-testid="stExpander"] details > summary span,
+    [data-testid="stExpander"] details > summary svg {
+        color: #0c4a6e !important;
+        fill: #0c4a6e !important;
+        stroke: #0c4a6e !important;
+    }
+    
+    .streamlit-expanderContent {
+        border: 1px solid #e0f2fe !important;
+        border-top: none !important;
+        border-radius: 0 0 8px 8px !important;
     }
     </style>
 """, unsafe_allow_html=True)
@@ -959,6 +1062,49 @@ def main():
                 st.session_state['annotated_img'] = annotated_img_rgb
                 st.session_state['csv_data'] = csv_data
                 
+                # --- VR GENERATION ---
+                # Prepare detections for VR
+                vr_detections = []
+                for item in csv_data:
+                    if item['Visualized'] == 'YES':
+                        vr_detections.append({
+                            'Label': item['Evidence_Type'],
+                            'Conf': item['Confidence_Score'],
+                            'Box': item['Coords']
+                        })
+                
+                # Convert original image to Base64
+                if not os.path.exists("generated_vr"):
+                    os.makedirs("generated_vr")
+                
+                buffered = io.BytesIO()
+                image.save(buffered, format="PNG")
+                img_b64 = base64.b64encode(buffered.getvalue()).decode()
+                img_src = f"data:image/png;base64,{img_b64}"
+                
+                # --- DEPTH ESTIMATION ---
+                st.info("Generating 3D Detail Map (This adds depth)...")
+                depth_map_pil, depth_array = estimate_depth(image)
+                
+                # Convert Depth to Base64
+                buffered_depth = io.BytesIO()
+                depth_map_pil.save(buffered_depth, format="PNG")
+                depth_b64 = base64.b64encode(buffered_depth.getvalue()).decode()
+                depth_src = f"data:image/png;base64,{depth_b64}"
+                # ------------------------
+                
+                # Generate VR HTML
+                img_w, img_h = image.size
+                vr_html_path = "generated_vr/index.html"
+                
+                # Pass depth data
+                create_aframe_scene(vr_detections, img_src, depth_src, depth_array, img_w, img_h, vr_html_path)
+                
+                # Read back the HTML 
+                with open(vr_html_path, 'r', encoding='utf-8') as f:
+                    st.session_state['vr_html'] = f.read()
+                # ---------------------
+                
                 # Success message
                 st.markdown("""
                     <div class="success-message">
@@ -977,6 +1123,24 @@ def main():
                 st.markdown('<div class="image-container">', unsafe_allow_html=True)
                 st.image(st.session_state['annotated_img'], use_container_width=True)
                 st.markdown('</div>', unsafe_allow_html=True)
+
+            # --- VR DISPLAY SECTION ---
+            if 'vr_html' in st.session_state:
+                st.markdown("<br>", unsafe_allow_html=True)
+                with st.expander("🕶️ ENTER VR MODE (IMMERSIVE EVIDENCE VIEW)", expanded=True):
+                     st.markdown("""
+                        <div style="background-color: #f3f4f6; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #a855f7;">
+                            <strong style="color: #000000;">Instructions:</strong> 
+                            <ul style="margin-top: 0.5rem; margin-bottom: 0;">
+                                <li>Use <strong>WASD</strong> keys to move (on PC)</li>
+                                <li><strong>Click & Drag</strong> to look around</li>
+                                <li>On Mobile: Move phone to look around</li>
+                                <li>Click 'VR' button in bottom right for Fullscreen VR</li>
+                            </ul>
+                        </div>
+                     """, unsafe_allow_html=True)
+                     components.html(st.session_state['vr_html'], height=500, scrolling=False)
+            # --------------------------
             
             # Evidence summary
             st.markdown("<br>", unsafe_allow_html=True)
